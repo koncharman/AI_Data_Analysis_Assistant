@@ -1,0 +1,20 @@
+# PyCharm
+.idea/
+
+# Example/local datasets
+example_data/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS
+.DS_Store
+Thumbs.db
