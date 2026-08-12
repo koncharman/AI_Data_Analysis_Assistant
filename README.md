@@ -1,10 +1,16 @@
 # AI Data Analyst
 
-A local AI-assisted data analysis platform built with **Python**, **Streamlit**, **SciPy**, **scikit-learn**, **PyTorch**, **Ollama**, and **LangChain tool calling**.
+A local AI-assisted (Agentic AI) data analysis framework built with **Python**, **Streamlit**, **SciPy**, **scikit-learn**, **PyTorch**, **Ollama**, and **LangChain**.
 
 ## Overview
 
-The application loads a dataset, profiles its variables, computes descriptive statistics, runs exploratory tests, performs clustering and text analysis, trains Random Forest and PyTorch models, and exposes those capabilities through an AI data analyst interface.
+1. Load dataset and profile its variables.
+2. Compute descriptive statistics
+3. Run exploratory tests
+4. Perform clustering
+5. Conduct text analysis
+6. Train Random Forest and PyTorch models
+7. Expose all capabilities through Agentic AI.
 
 Core principle:
 
@@ -104,49 +110,6 @@ Supports:
 - class-imbalance handling;
 - K-fold cross-validation.
 
-Example:
-
-```text
-Input
-  ↓
-Linear(64)
-  ↓
-ReLU
-  ↓
-Linear(32)
-  ↓
-ReLU
-  ↓
-Output
-```
-
-Direct input-to-output weights are available with:
-
-```python
-hidden_layers=[]
-```
-
-## Neural-Network Cross-Validation
-
-```text
-Complete dataset
-       ↓
-Outer K-fold CV
-       ↓
-Outer training set
-       ↓
-Internal train/validation split
-       ↓
-Early stopping
-       ↓
-Evaluate untouched outer fold
-       ↓
-Aggregate metrics
-       ↓
-Median best epoch
-       ↓
-Train final model on all data
-```
 
 ## AI Data Analyst Agent
 
