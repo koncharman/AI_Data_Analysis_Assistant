@@ -1,24 +1,16 @@
 # AI Data Analyst
 
-A local AI-assisted (Agentic AI) data analysis framework built with **Python**, **Streamlit**, **SciPy**, **scikit-learn**, **PyTorch**, **Ollama**, and **LangChain**.
+A local AI-assisted (Agentic AI) data analysis framework built with **Python**, **Streamlit**, **SciPy**, **statsmodels**, **scikit-learn**, **PyTorch**, **Ollama**, and **LangChain**.
 
 ## Overview
 
 1. Load dataset and profile its variables.
-2. Compute descriptive statistics
-3. Run exploratory tests
-4. Perform clustering
-5. Conduct text analysis
+2. Compute Descriptive Statistics
+3. Conduct Exploratory Analysis
+4. Perform Cluster Analysis
+5. Run Text Analysis
 6. Train Random Forest and PyTorch models
 7. Expose all capabilities through Agentic AI.
-
-Core principle:
-
-```text
-LLM decides WHAT is needed
-Python calculates the result
-LLM explains the result
-```
 
 ## Main Features
 
@@ -161,37 +153,9 @@ Ollama interpretation
 User-facing answer
 ```
 
-## Project Structure
-
-```text
-AI-Data-Analyst/
-├── main.py
-├── data/
-│   ├── __init__.py
-│   ├── data_loader.py
-│   └── data_profiler.py
-├── analysis/
-│   ├── __init__.py
-│   ├── statistics.py
-│   ├── eda.py
-│   ├── clustering.py
-│   ├── text_analysis.py
-│   ├── machine_learning.py
-│   └── neural_networks.py
-├── agents/
-│   ├── __init__.py
-│   ├── tool_context.py
-│   ├── analysis_tools.py
-│   ├── prompts.py
-│   └── data_analyst_agent.py
-├── tests/
-├── requirements.txt
-└── README.md
-```
-
 ## Streamlit Interface
 
-Recommended tabs:
+Tabs:
 
 ```text
 Overview
@@ -205,20 +169,6 @@ AI Data Analyst
 ```
 
 Heavy operations run only after explicit user actions. Dataset/profile state is retained with `st.session_state`.
-
-## Dataset Context
-
-```text
-Streamlit
-   ↓
-DatasetContext
-   ├── DataFrame
-   └── profile
-        ↓
-Agent tools
-```
-
-This prevents the full DataFrame from being passed through the LLM.
 
 ## Example Agent Questions
 
@@ -239,48 +189,28 @@ Does Weight differ between smokers and non-smokers?
 ```
 
 ```text
-Cluster the observations using age, height and weight.
+Cluster the observations using age, height, and weight.
 ```
 
 ```text
-Train a Random Forest to predict the target.
+Train a Random Forest to predict genre as a target.
 ```
 
 ```text
-Train a neural network to predict the target.
+Train a neural network to predict age as a target.
 ```
 
 ## Installation
 
-```bash
-git clone <repository-url>
-cd AI-Data-Analyst
-
-python -m venv venv
-```
-
-Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-Linux/macOS:
-
-```bash
-source venv/bin/activate
-```
-
-Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-For the current LangChain setup:
-
+Ollama version
 ```bash
-pip install langchain==0.3.30 langchain-ollama
+ollama --version
+0.32.7
 ```
 
 ## Ollama
@@ -300,90 +230,3 @@ streamlit run main.py
 ```bash
 python -m pytest -v
 ```
-
-Tests should cover both deterministic analysis functions and agent-facing tool wrappers.
-
-## Reliability Rules
-
-The system prompt instructs the LLM to:
-- never invent columns or statistical results;
-- use tools for dataset-dependent claims;
-- use exact column names;
-- prefer statistically valid methods;
-- distinguish association from causation;
-- avoid expensive analyses unless requested;
-- avoid tool calls with missing required arguments.
-
-Agent-facing outputs are compacted so the local model does not receive fitted pipelines, tensors, preprocessors, or huge weight matrices.
-
-## Current Limitations
-
-- Small local models can occasionally choose the wrong tool.
-- Tool arguments may still require validation and normalization.
-- Neural-network K-fold CV can be computationally expensive.
-- Statistical routing still depends partly on the LLM.
-
-## Future Improvements
-
-### Deterministic statistical router
-Let the LLM identify intent/columns, while Python selects the valid statistical test.
-
-### Model persistence
-Save trained scikit-learn and PyTorch models.
-
-### Prediction interface
-Allow users to submit new rows for prediction.
-
-### Monitoring
-Track training time, inference latency, model scores, and dataset drift.
-
-### Better visualizations
-Add confusion matrices, regression diagnostics, cluster plots, feature-importance plots, and training curves.
-
-### LangGraph later
-Introduce LangGraph only when the workflow requires stronger multi-step routing, retries, approvals, persistence, or pause/resume.
-
-## Technologies
-
-- Python
-- pandas
-- NumPy
-- SciPy
-- statsmodels
-- scikit-learn
-- PyTorch
-- Streamlit
-- LangChain
-- Ollama
-- pytest
-
-## Portfolio Skills Demonstrated
-
-```text
-Automated data profiling
-Statistical inference
-EDA
-Clustering
-NLP analysis
-Classical machine learning
-PyTorch neural networks
-Cross-validation
-Class imbalance handling
-Model interpretation
-Tool-calling agents
-Local LLM integration
-Streamlit UI design
-Testing
-```
-
-## Engineering Philosophy
-
-The project separates natural-language reasoning from numerical computation.
-
-```text
-Language understanding → LLM
-Statistical / ML computation → Python
-Result interpretation → LLM
-```
-
-That separation is the central architectural idea of the AI Data Analyst.
