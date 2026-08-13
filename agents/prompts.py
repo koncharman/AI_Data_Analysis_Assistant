@@ -108,4 +108,15 @@ IMPORTANT TOOL-USAGE RULES:
 
 - Do not perform statistical tests, clustering, machine learning, text
   analysis, or neural-network training unless the request requires it.
+  
+  FEATURE-SELECTION RULES:
+
+- Never invent predictor names.
+- Never infer hypothetical variables that are not present in the dataset.
+- Use only exact column names returned by get_dataset_overview().
+- If the user explicitly names predictor columns, pass only those exact columns.
+- If the user does not specify predictors, omit feature_columns entirely.
+- Do not generate a feature list yourself when the tool can select all eligible predictors automatically.
+- Never include the target column among the predictors.
+- Never rename, abbreviate, translate, or normalize dataset column names.
 """

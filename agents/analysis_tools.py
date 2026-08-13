@@ -205,22 +205,121 @@ def analyze_text_column(
 @tool
 def train_random_forest_model(
     target_column: str,
-    feature_columns: List[str],
+    feature_columns: Optional[Any] = None,
     task_type: Optional[str] = None,
     cv_folds: int = 10,
     n_estimators: int = 300,
     handle_class_imbalance: bool = True,
 ) -> Dict[str, Any]:
-    """Train and cross-validate a Random Forest for explicit prediction/model requests."""
+    """
+    Train and cross-validate a Random Forest.
+
+    You can omit everything apart from target_column. Omit every variable not mentioned, give their default values or do not include them in the query.
+
+    target_column must be an exact existing dataset column name.
+
+    feature_columns must contain only exact existing dataset column names.
+
+    If the user does not explicitly specify feature_columns,
+    omit feature_columns. The tool will automatically use all
+    eligible predictor columns from the dataset profile, excluding
+    the target.
+
+    feature_columns: format is a Python list (example: []), it can be omited if the user does not give input.
+
+    Never invent, infer, rename, abbreviate, or generate feature
+    names that are not present in the dataset.
+    """
+
+    if isinstance(cv_folds, str):
+        cv_folds=int(cv_folds)
+
+    if isinstance(n_estimators, str):
+        n_estimators = int(n_estimators)
+
+
+    dataframe = dataset_context.get_dataframe()
+    profile = dataset_context.get_profile()
+
+    # --------------------------------------------------------
+    # Validate target
+    # --------------------------------------------------------
+
+    if target_column not in dataframe.columns:
+        raise ValueError(
+            f"Unknown target column: {target_column}"
+        )
+
+    # --------------------------------------------------------
+    # Resolve feature columns
+    # --------------------------------------------------------
+
+    if not isinstance(feature_columns, list) or len(feature_columns) == 0:
+
+        resolved_features = (
+            profile.get("numeric_columns", [])
+            + profile.get("categorical_columns", [])
+            + profile.get("boolean_columns", [])
+        )
+
+        resolved_features = [
+            column
+            for column in resolved_features
+            if column != target_column
+        ]
+
+    else:
+
+        unknown_features = [
+            column
+            for column in feature_columns
+            if column not in dataframe.columns
+        ]
+
+        if unknown_features:
+            raise ValueError(
+                "Unknown feature columns: {}".format(
+                    unknown_features
+                )
+            )
+
+        resolved_features = [
+            column
+            for column in feature_columns
+            if column != target_column
+        ]
+
+    if isinstance(handle_class_imbalance, bool):
+
+        resolved_imbalance = handle_class_imbalance
+
+    elif isinstance(handle_class_imbalance, str):
+
+        resolved_imbalance = (
+            handle_class_imbalance
+            .strip()
+            .lower()
+            in {
+                "true",
+                "1",
+                "yes",
+            }
+        )
+
+    else:
+        resolved_imbalance = True
+
+
+
     result = train_random_forest(
         dataframe=dataset_context.get_dataframe(),
         profile=dataset_context.get_profile(),
         target_column=target_column,
-        feature_columns=feature_columns,
+        feature_columns=resolved_features,
         task_type=task_type,
         cv_folds=cv_folds,
         n_estimators=n_estimators,
-        handle_class_imbalance=handle_class_imbalance,
+        handle_class_imbalance=resolved_imbalance,
     )
     return _json_safe(result)
 
@@ -228,34 +327,129 @@ def train_random_forest_model(
 @tool
 def train_neural_network_model(
     target_column: str,
-    feature_columns: List[str],
+    feature_columns: Optional[Any] = None,
     task_type: Optional[str] = None,
     hidden_layers: Optional[Any] = None,
-    activation: Optional[str] = None,
-    cv_folds: Optional[int] = None,
-    max_epochs: Optional[int] = None,
+    activation: Optional[Any] = None,
+    cv_folds: Optional[int] = 10,
+    max_epochs: Optional[int] = 100,
     patience: Optional[int] = None,
-    learning_rate: Optional[float] = None,
-    batch_size: Optional[int] = None,
-    handle_class_imbalance: Optional[bool] = None,
+    learning_rate: Optional[float] = 0.05,
+    batch_size: Optional[int] = 16,
+    handle_class_imbalance: Optional[bool] = True,
 ) -> Dict[str, Any]:
     """
     Train and evaluate a PyTorch feed-forward neural network.
 
-    Use exact dataset column names.
+    You can omit everything apart from target_column. Omit every variable not mentioned, give their default values or do not include them in the query.
 
-    Omit optional parameters when they are not explicitly
-    requested. Do not pass null values, empty strings, or
-    empty objects for optional parameters.
+    target_column must be an exact existing dataset column name.
+
+    feature_columns must contain only exact existing dataset column names.
+
+    If the user does not explicitly specify feature_columns,
+    omit feature_columns. The tool will automatically use all
+    eligible predictor columns from the dataset profile, excluding
+    the target.
+
+    feature_columns: format is a Python list (example: []), it can be omited if the user does not give input.
+
+    Never invent, infer, rename, abbreviate, or generate feature
+    names that are not present in the dataset.
 
     Returns a compact summary of model performance suitable
     for interpretation by the agent. Raw neural-network
     weight matrices are not returned.
+
+    activation and hidden_layers are related to the layers of the network. They can be empty or lists.
     """
+
+    if isinstance(cv_folds, str):
+        cv_folds = int(cv_folds)
+
+    if isinstance(max_epochs, str):
+        max_epochs = int(max_epochs)
+
+    if isinstance(learning_rate, str):
+        learning_rate = int(learning_rate)
+
+    if isinstance(batch_size, str):
+        learning_rate = int(learning_rate)
 
     # --------------------------------------------------------
     # Normalize task type
     # --------------------------------------------------------
+
+    dataframe = dataset_context.get_dataframe()
+    profile = dataset_context.get_profile()
+
+    # --------------------------------------------------------
+    # Validate target
+    # --------------------------------------------------------
+
+    if target_column not in dataframe.columns:
+        raise ValueError(
+            f"Unknown target column: {target_column}"
+        )
+
+    # --------------------------------------------------------
+    # Resolve feature columns
+    # --------------------------------------------------------
+
+    if not isinstance(feature_columns, list) or len(feature_columns) == 0:
+
+        resolved_features = (
+            profile.get("numeric_columns", [])
+            + profile.get("categorical_columns", [])
+            + profile.get("boolean_columns", [])
+        )
+
+        resolved_features = [
+            column
+            for column in resolved_features
+            if column != target_column
+        ]
+
+    else:
+
+        unknown_features = [
+            column
+            for column in feature_columns
+            if column not in dataframe.columns
+        ]
+
+        if unknown_features:
+            raise ValueError(
+                "Unknown feature columns: {}".format(
+                    unknown_features
+                )
+            )
+
+        resolved_features = [
+            column
+            for column in feature_columns
+            if column != target_column
+        ]
+
+    if isinstance(handle_class_imbalance, bool):
+
+        resolved_imbalance = handle_class_imbalance
+
+    elif isinstance(handle_class_imbalance, str):
+
+        resolved_imbalance = (
+            handle_class_imbalance
+            .strip()
+            .lower()
+            in {
+                "true",
+                "1",
+                "yes",
+            }
+        )
+
+    else:
+        resolved_imbalance = True
 
     resolved_task_type = None
 
@@ -284,10 +478,7 @@ def train_neural_network_model(
     else:
         # Default architecture when the model supplies
         # None, {}, "", or another invalid value.
-        resolved_hidden_layers = [
-            64,
-            32,
-        ]
+        resolved_hidden_layers = []
 
     # --------------------------------------------------------
     # Normalize activation
@@ -297,7 +488,7 @@ def train_neural_network_model(
         activation.strip().lower()
         if isinstance(activation, str)
         and activation.strip()
-        else "relu"
+        else "identity"
     )
 
     valid_activations = {
@@ -312,7 +503,7 @@ def train_neural_network_model(
     }
 
     if resolved_activation not in valid_activations:
-        resolved_activation = "relu"
+        resolved_activation = "identity"
 
     # --------------------------------------------------------
     # Normalize numeric options
@@ -356,14 +547,6 @@ def train_neural_network_model(
         else 32
     )
 
-    resolved_imbalance = (
-        handle_class_imbalance
-        if isinstance(
-            handle_class_imbalance,
-            bool,
-        )
-        else True
-    )
 
     # --------------------------------------------------------
     # Run the actual neural-network analysis
@@ -373,7 +556,7 @@ def train_neural_network_model(
         dataframe=dataset_context.get_dataframe(),
         profile=dataset_context.get_profile(),
         target_column=target_column,
-        feature_columns=feature_columns,
+        feature_columns=resolved_features,
         task_type=resolved_task_type,
         hidden_layers=resolved_hidden_layers,
         activations=resolved_activation,
