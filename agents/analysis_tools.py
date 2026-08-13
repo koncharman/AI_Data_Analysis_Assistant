@@ -214,7 +214,7 @@ def train_random_forest_model(
     """
     Train and cross-validate a Random Forest.
 
-    You can omit everything apart from target_column. Omit every variable not mentioned, give their default values or do not include them in the query.
+    You can omit everything apart from target_column. Omit every variable not mentioned, do not include them in the query.
 
     target_column must be an exact existing dataset column name.
 
@@ -330,7 +330,7 @@ def train_neural_network_model(
     feature_columns: Optional[Any] = None,
     task_type: Optional[str] = None,
     hidden_layers: Optional[Any] = None,
-    activation: Optional[Any] = None,
+    activation: Optional[str] = None,
     cv_folds: Optional[int] = 10,
     max_epochs: Optional[int] = 100,
     patience: Optional[int] = None,
@@ -341,7 +341,7 @@ def train_neural_network_model(
     """
     Train and evaluate a PyTorch feed-forward neural network.
 
-    You can omit everything apart from target_column. Omit every variable not mentioned, give their default values or do not include them in the query.
+    You can omit everything apart from target_column. Omit every variable not mentioned, do not include them in the query.
 
     target_column must be an exact existing dataset column name.
 
@@ -353,6 +353,10 @@ def train_neural_network_model(
     the target.
 
     feature_columns: format is a Python list (example: []), it can be omited if the user does not give input.
+
+    activation: format is a Python string, it can be omited if the user does not give input.
+
+    hidden_layers: format is a Python list (example: []), it can be omited if the user does not give input.
 
     Never invent, infer, rename, abbreviate, or generate feature
     names that are not present in the dataset.
