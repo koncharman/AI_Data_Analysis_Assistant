@@ -12,6 +12,9 @@ A local AI-assisted (Agentic AI) data analysis framework built with **Python**, 
 6. Train Random Forest and PyTorch models
 7. Expose all capabilities through Agentic AI.
 
+## Screenshots
+You can see some representative views of the current APP in screenshots/
+
 ## Main Features
 
 ### Dataset Loading
