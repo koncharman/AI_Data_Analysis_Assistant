@@ -206,6 +206,7 @@ def analyze_text_column(
 def train_random_forest_model(
     target_column: str,
     feature_columns: Optional[Any] = None,
+    exclude_columns: Optional[Any] = None,
     task_type: Optional[str] = None,
     cv_folds: int = 10,
     n_estimators: int = 300,
@@ -220,12 +221,21 @@ def train_random_forest_model(
 
     feature_columns must contain only exact existing dataset column names.
 
+    exclude_columns must contain only exact existing dataset column names.
+
+    If the user does not explicitly specify exclude_columns,
+    omit exclude_columns. The tool will automatically use all
+    eligible predictor columns from the dataset profile, excluding
+    the target.
+
     If the user does not explicitly specify feature_columns,
     omit feature_columns. The tool will automatically use all
     eligible predictor columns from the dataset profile, excluding
     the target.
 
     feature_columns: format is a Python list (example: []), it can be omited if the user does not give input.
+
+    exclude_columns: format is a Python list (example: []), it can be omited if the user does not give input.
 
     Never invent, infer, rename, abbreviate, or generate feature
     names that are not present in the dataset.
@@ -265,7 +275,7 @@ def train_random_forest_model(
         resolved_features = [
             column
             for column in resolved_features
-            if column != target_column
+            if column != target_column and column not in exclude_columns
         ]
 
     else:
@@ -286,7 +296,7 @@ def train_random_forest_model(
         resolved_features = [
             column
             for column in feature_columns
-            if column != target_column
+            if column != target_column and column not in exclude_columns
         ]
 
     if isinstance(handle_class_imbalance, bool):
@@ -328,6 +338,7 @@ def train_random_forest_model(
 def train_neural_network_model(
     target_column: str,
     feature_columns: Optional[Any] = None,
+    exclude_columns: Optional[Any] = None,
     task_type: Optional[str] = None,
     hidden_layers: Optional[Any] = None,
     activation: Optional[str] = None,
@@ -347,12 +358,22 @@ def train_neural_network_model(
 
     feature_columns must contain only exact existing dataset column names.
 
+    exclude_columns must contain only exact existing dataset column names.
+
+
     If the user does not explicitly specify feature_columns,
     omit feature_columns. The tool will automatically use all
     eligible predictor columns from the dataset profile, excluding
     the target.
 
+    If the user does not explicitly specify exclude_columns,
+    omit exclude_columns. The tool will automatically use all
+    eligible predictor columns from the dataset profile, excluding
+    the target.
+
     feature_columns: format is a Python list (example: []), it can be omited if the user does not give input.
+
+    exclude_columns: format is a Python list (example: []), it can be omited if the user does not give input.
 
     activation: format is a Python string, it can be omited if the user does not give input.
 
@@ -411,7 +432,7 @@ def train_neural_network_model(
         resolved_features = [
             column
             for column in resolved_features
-            if column != target_column
+            if column != target_column and column not in exclude_columns
         ]
 
     else:
@@ -432,7 +453,7 @@ def train_neural_network_model(
         resolved_features = [
             column
             for column in feature_columns
-            if column != target_column
+            if column != target_column and column not in exclude_columns
         ]
 
     if isinstance(handle_class_imbalance, bool):
