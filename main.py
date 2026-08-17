@@ -226,7 +226,7 @@ def load_uploaded_dataset(uploaded_file: Any) -> None:
     st.session_state.agent_trace = None
     reset_analysis_results()
 
-
+#
 def require_dataset() -> bool:
     """
     Show a friendly message when no dataset is available.
