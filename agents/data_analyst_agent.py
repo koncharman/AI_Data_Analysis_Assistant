@@ -34,7 +34,7 @@ def create_data_analyst_agent(
     llm = ChatOllama(
         model=model_name,
         temperature=0,
-        base_url=OLLAMA_BASE_URL,
+        #base_url=OLLAMA_BASE_URL,
 
     )
 
