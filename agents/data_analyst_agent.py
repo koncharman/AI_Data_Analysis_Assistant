@@ -31,6 +31,8 @@ def create_data_analyst_agent(
     llm = ChatOllama(
         model=model_name,
         temperature=0,
+        base_url="http://127.0.0.1:11434",
+
     )
 
     # LangChain 0.3 tool-calling agents require a prompt
