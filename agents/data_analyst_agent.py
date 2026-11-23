@@ -12,6 +12,9 @@ from langchain_ollama import ChatOllama
 
 from agents.analysis_tools import ANALYSIS_TOOLS
 from agents.prompts import DATA_ANALYST_SYSTEM_PROMPT
+import os
+
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
 
 
 def create_data_analyst_agent(
@@ -31,7 +34,7 @@ def create_data_analyst_agent(
     llm = ChatOllama(
         model=model_name,
         temperature=0,
-        base_url="http://127.0.0.1:11434",
+        base_url=OLLAMA_BASE_URL,
 
     )
 
